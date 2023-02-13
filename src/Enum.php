@@ -7,37 +7,42 @@ use ReflectionClass;
 use ReflectionException;
 
 /**
- * 基础枚举类
- * 通过实现该类创建枚举
+ * zh: 基础枚举类 - 通过包实现该类创建枚举
+ * en: Base enumeration class - implement this class to create enumerations through the package
  */
 abstract class Enum
 {
     /**
-     * 枚举键, 常量名称
+     * zh: 枚举键, 常量名称
+     * en: enum key, constant name
      * @var string
      */
     public string $key;
 
     /**
-     * 枚举值
+     * zh: 枚举值
+     * en: enum value
      * @var mixed
      */
     public $value;
 
     /**
-     * 枚举注解值
+     * zh: 枚举注解值
+     * en: enum annotation value
      * @var string
      */
     public string $message;
 
     /**
-     * 常量列表
+     * zh: 常量列表
+     * en: constant list
      * @var array
      */
     private static array $constants = [];
 
     /**
-     * 枚举类实例
+     * zh: 枚举类实例
+     * en: enum class instance
      * @var array
      */
     private static array $instances = [];
@@ -55,7 +60,8 @@ abstract class Enum
     }
 
     /**
-     * 获取指定实例
+     * zh: 获取指定常量
+     * en: Get the specified constant
      * @param $value
      * @return Enum
      * @throws ReflectionException
@@ -66,7 +72,8 @@ abstract class Enum
     }
 
     /**
-     * 获取枚举 key
+     * zh: 获取枚举 key
+     * en: Get the enumeration key
      * @param $value
      * @return string|null
      * @throws ReflectionException
@@ -77,7 +84,8 @@ abstract class Enum
     }
 
     /**
-     * 获取枚举 value
+     * zh: 获取枚举 value
+     * en: Get the enumeration value
      * @param $value
      * @return mixed|null
      * @throws ReflectionException
@@ -88,7 +96,8 @@ abstract class Enum
     }
 
     /**
-     * 获取枚举 message
+     * zh: 获取枚举 message
+     * en: Get the enumeration message
      * @param $value
      * @return string|null
      * @throws ReflectionException
@@ -99,7 +108,8 @@ abstract class Enum
     }
 
     /**
-     * 返回 Enum 类中所有常量的名称（键）
+     * zh: 返回 Enum 类中所有常量的名称（键）
+     * en: Returns the names (keys) of all constants in the Enum class
      * @return array
      * @throws ReflectionException
      */
@@ -109,7 +119,8 @@ abstract class Enum
     }
 
     /**
-     * 返回所有枚举常量的 Enum 类的实例（键中的常量名称，值中的枚举实例）
+     * zh: 返回 Enum 类中所有枚举常量值（值）
+     * en: Returns all enumeration constant values (values) in the Enum class
      * @return array
      * @throws ReflectionException
      */
@@ -119,7 +130,8 @@ abstract class Enum
     }
 
     /**
-     * 返回所有枚举常量的信息
+     * zh: 返回所有枚举常量的信息 (message)
+     * en: Return the information of all enumeration constants (message)
      * @return array
      * @throws ReflectionException
      */
@@ -129,7 +141,8 @@ abstract class Enum
     }
 
     /**
-     * 返回常量指定信息
+     * zh: 返回常量指定信息
+     * en: Return constant specification information
      * @param string $keys
      * @return array
      * @throws ReflectionException
@@ -142,7 +155,8 @@ abstract class Enum
     }
 
     /**
-     * 返回当前
+     * zh: 返回当前
+     * en: return to current
      * @param string $value
      * @return array
      * @throws ReflectionException
@@ -153,7 +167,8 @@ abstract class Enum
     }
 
     /**
-     * 搜索枚举实例
+     * zh: 搜索枚举常量
+     * en: Search for enum constants
      * @param string $value
      * @return array
      * @throws ReflectionException
@@ -170,7 +185,8 @@ abstract class Enum
 
 
     /**
-     * 返回当前常量数组
+     * zh: 返回当前常量数组
+     * en: returns the current constant array
      * @return array
      * @throws ReflectionException
      */

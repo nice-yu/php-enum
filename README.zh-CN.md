@@ -1,14 +1,15 @@
 > [简体中文](README.zh-CN.md) | [English](README.md)
 
-# PHP 枚举实现
+### PHP 枚举实现
 不需要单独安装 `SplEnum` 扩展的 `php7.4` 枚举类包
 
-## 安装
+#### 安装
 ```
 composer require nice-yu/php-enum
 ```
 
-## 单元测试信息
+#### 单元测试信息
+- 覆盖率 100% 的单元测试
 ```
 Enum (NiceYu\Tests\Enum\Enum)
  ✔ The static call to the get method [0.17 ms]
@@ -27,7 +28,7 @@ Enum (NiceYu\Tests\Enum\Enum)
  ✔ Not existent search for empty constants [0.10 ms]
 ```
 
-## 枚举类定义
+#### 枚举类定义
 
 ```php
 <?php
@@ -52,7 +53,7 @@ class SwitchEnum extends Enum
 }
 ```
 
-## 方法
+#### 方法
 ```php
 SwitchEnum::search('ON');
 // OR
@@ -81,12 +82,29 @@ SwitchEnum::getValues();
 SwitchEnum::getMessages();
 ```
 
-## 传参
+#### 传参
 ```php
 function run(SwitchEnum $num) {
     // ...
 }
 ```
 
-## 文档
-- `__construct()` 可以自动检查到
+#### Enum 存在参数
+- `$enum->key`
+- `$enum->value`
+- `$enum->message`
+
+#### new 的方式
+- `__construct()` 以 `Enum` 形式返回所有可能的值, 传入参数可以为 `key`, `value`
+
+#### 静态方法
+- `get()` 以 `Enum` 形式返回所有对应的 `Enum`, 传入参数可以为 `key`, `value`
+- `search()` 以数组形式返回所有可能的值 `key` `value` `message`, 传入参数可以为 `key`, `value`
+- `getKey()` 以 `string` 形式返回, `枚举类` 内对应的 `key`, 传入参数可以为 `key`, `value`
+- `getValue()` 以 `对应类型` 形式返回, `枚举类` 内对应的 `value`, 传入参数可以为 `key`, `value`
+- `getMessage()` 以 `string` 形式返回, `枚举类` 内对应的 `message`, 传入参数可以为 `key`, `value`
+- `getKeys()` 以数组形式返回 `枚举类` 所有的 `key`, 不需要传入参数
+- `getValues()` 以数组形式返回 `枚举类` 所有的 `value`, 不需要传入参数
+- `getMessages()` 以数组形式返回 `枚举类` 所有的 `message`, 不需要传入参数
+- `ON()`  以 `Enum` 形式返回所有对应的 `Enum`, `ON` 为 `枚举类` 内的常量名称
+- `$enum()`  以 `Enum` 形式返回所有对应的 `Enum`, `$enum` 为 `枚举类` 内的常量名称 (这种动态调用方式较慢)

@@ -1,14 +1,15 @@
 > [简体中文](README.zh-CN.md) | [English](README.md)
 
-# PHP 枚举实现
-不需要单独安装 `SplEnum` 扩展的 `php7.4` 枚举类包
+### PHP enum implementation
+The `php7.4` enumeration class package that does not require a separate installation of the `SplEnum` extension
 
-## 安装
+#### Install
 ```
 composer require nice-yu/php-enum
 ```
-
-## 单元测试信息
+#### Unit Test Information
+- Unit tests with 100% coverage
+- 
 ```
 Enum (NiceYu\Tests\Enum\Enum)
  ✔ The static call to the get method [0.17 ms]
@@ -27,7 +28,7 @@ Enum (NiceYu\Tests\Enum\Enum)
  ✔ Not existent search for empty constants [0.10 ms]
 ```
 
-## 枚举类定义
+#### enum class definition
 
 ```php
 <?php
@@ -44,15 +45,15 @@ use NiceYu\Enum\Enum;
  */
 class SwitchEnum extends Enum
 {
-    /** 开启 */
+    /** on */
     protected const ON = '1';
 
-    /** 关闭 */
+    /** off */
     protected const OFF = '0';
 }
 ```
 
-## 方法
+#### method
 ```php
 SwitchEnum::search('ON');
 // OR
@@ -81,12 +82,29 @@ SwitchEnum::getValues();
 SwitchEnum::getMessages();
 ```
 
-## 传参
+#### pass parameters
 ```php
 function run(SwitchEnum $num) {
     // ...
 }
 ```
 
-## 文档
-- `__construct()` 可以自动检查到
+#### Enum exists parameter
+- `$enum->key`
+- `$enum->value`
+- `$enum->message`
+
+#### new way
+- `__construct()` Return all possible values in the form of `Enum`, the incoming parameters can be `key`, `value`
+
+#### static method
+- `get()` Return all corresponding `Enum` in the form of `Enum`, and the incoming parameters can be `key`, `value`
+- `search()` Return all possible values `key` `value` `message` in the form of an array, and the incoming parameters can be `key`, `value`
+- `getKey()` Returned in the form of `string`, the corresponding `key` in the `enumeration class`, the incoming parameters can be `key`, `value`
+- `getValue()` Return in the form of `corresponding type`, the corresponding `value` in `enumeration class`, the incoming parameters can be `key`, `value`
+- `getMessage()` Returned in the form of `string`, the corresponding `message` in the `enumeration class`, the incoming parameters can be `key`, `value`
+- `getKeys()` Return all `keys` of the `enumeration class` in the form of an array, no need to pass in parameters
+- `getValues()` Return all `values` of `enumeration class` in the form of an array, no need to pass in parameters
+- `getMessages()` Return all `messages` of the `enumeration class` in the form of an array, no need to pass in parameters
+- `ON()` Return all corresponding `Enum` in the form of `Enum`, `ON` is the constant name in `enum class`
+- `$enum()` Return all corresponding `Enum` in the form of `Enum`, `$enum` is the constant name in the `enumeration class` (this dynamic calling method is slower)
