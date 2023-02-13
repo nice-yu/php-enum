@@ -7,9 +7,10 @@ The `php7.4` enumeration class package that does not require a separate installa
 ```
 composer require nice-yu/php-enum
 ```
+
 #### Unit Test Information
 - Unit tests with 100% coverage
-- 
+
 ```
 Enum (NiceYu\Tests\Enum\Enum)
  ✔ The static call to the get method [0.17 ms]
