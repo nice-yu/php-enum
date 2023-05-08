@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 namespace NiceYu\Enum;
-use BadMethodCallException;
+
 use ReflectionClass;
 use ReflectionException;
 
@@ -13,34 +13,6 @@ use ReflectionException;
 abstract class Enum
 {
     /**
-     * zh: 枚举键, 常量名称
-     * en: enum key, constant name
-     * @var string
-     */
-    public string $key;
-
-    /**
-     * zh: 枚举值
-     * en: enum value
-     * @var mixed
-     */
-    public $value;
-
-    /**
-     * zh: 枚举注解值
-     * en: enum annotation value
-     * @var string
-     */
-    public string $message;
-
-    /**
-     * zh: 常量列表
-     * en: constant list
-     * @var array
-     */
-    private static array $constants = [];
-
-    /**
      * zh: 枚举类实例
      * en: enum class instance
      * @var array
@@ -48,182 +20,205 @@ abstract class Enum
     private static array $instances = [];
 
     /**
-     * @param $value
-     * @throws ReflectionException
+     * get 方式获取到 const 信息
+     * 注意: 使用值 反向获取的时候, 如果存在多个相同值, 不准确
+     * @param string $value
+     * @param ...$arguments
+     * @return mixed
      */
-    public function __construct($value)
+    public static function get(string $value, ...$arguments)
     {
-        ['key'=>$key,'value'=>$value,'message'=>$message] = static::returnConstant($value);
-        $this->key = $key;
-        $this->value = $value;
-        $this->message = $message;
+        return self::searchConst($value, $arguments);
     }
 
     /**
-     * zh: 获取指定常量
-     * en: Get the specified constant
-     * @param $value
-     * @return Enum
-     * @throws ReflectionException
+     * 获取到 const 信息, 返回 name
+     * @param string $value
+     * @return string
      */
-    public static function get($value): Enum
+    public static function getKey(string $value): string
     {
-        return new static($value);
+        return self::searchConst($value, ['name']);
     }
 
     /**
-     * zh: 获取枚举 key
-     * en: Get the enumeration key
-     * @param $value
-     * @return string|null
-     * @throws ReflectionException
+     * 获取到 const 信息, 返回 value
+     * @param string $value
+     * @return mixed|EnumDto|null
      */
-    public static function getKey($value): ?string
+    public static function getValue(string $value)
     {
-        return self::get($value)->key ?? null;
+        return self::searchConst($value, ['value']);
     }
 
     /**
-     * zh: 获取枚举 value
-     * en: Get the enumeration value
-     * @param $value
-     * @return mixed|null
-     * @throws ReflectionException
+     * 获取到 const 信息, 返回 message
+     * @param string $value
+     * @param string $lang
+     * @return mixed|EnumDto|null
      */
-    public static function getValue($value)
+    public static function getMessage(string $value, string $lang = 'zh')
     {
-        return self::get($value)->value ?? null;
+        return self::searchConst($value, ['notes',$lang]);
     }
 
     /**
-     * zh: 获取枚举 message
-     * en: Get the enumeration message
-     * @param $value
-     * @return string|null
-     * @throws ReflectionException
-     */
-    public static function getMessage($value): ?string
-    {
-        return self::get($value)->message ?? null;
-    }
-
-    /**
-     * zh: 返回 Enum 类中所有常量的名称（键）
-     * en: Returns the names (keys) of all constants in the Enum class
+     * 获取到所有 const 的 key
      * @return array
-     * @throws ReflectionException
      */
     public static function getKeys(): array
     {
-        return self::getArray();
+        return array_keys(self::toArray());
     }
 
     /**
-     * zh: 返回 Enum 类中所有枚举常量值（值）
-     * en: Returns all enumeration constant values (values) in the Enum class
+     * 获取到所有 const 的 value
      * @return array
-     * @throws ReflectionException
      */
-    public static function getValues():array
-    {
-        return self::getArray('value');
-    }
-
-    /**
-     * zh: 返回所有枚举常量的信息 (message)
-     * en: Return the information of all enumeration constants (message)
-     * @return array
-     * @throws ReflectionException
-     */
-    public static function getMessages():array
-    {
-        return self::getArray('message');
-    }
-
-    /**
-     * zh: 返回常量指定信息
-     * en: Return constant specification information
-     * @param string $keys
-     * @return array
-     * @throws ReflectionException
-     */
-    private static function getArray(string $keys = 'key'):array
+    public static function getValues(): array
     {
         return array_keys(
-            array_column(self::toArray(),null,$keys)
+            array_column(self::toArray(),null,'value')
         );
     }
 
     /**
-     * zh: 返回当前
-     * en: return to current
-     * @param string $value
+     * 获取到所有 const 的 note
+     * @param string $lang
      * @return array
-     * @throws ReflectionException
      */
-    private static function returnConstant(string $value):array
+    public static function getMessages(string $lang = 'zh'): array
     {
-        return self::search($value);
+        $notes = array();
+        foreach (self::toArray() as $const){
+            $notes[] = $const->notes[$lang];
+        }
+        return $notes;
     }
 
     /**
-     * zh: 搜索枚举常量
-     * en: Search for enum constants
-     * @param string $value
-     * @return array
-     * @throws ReflectionException
+     * 使用 name 获取到 const 信息
+     * @param string $method
+     * @param array $arguments
+     * @return mixed|EnumDto|null
      */
-    public static function search(string $value):array
+    private static function searchConst(string $method, array $arguments)
     {
-        foreach (self::toArray() as $constant){
-            if (in_array($value,$constant)){
-                return $constant;
+        $constants = self::toArray();
+        $constant = null;
+
+        /**
+         * 循环查找对应值
+         * @var EnumDto $item
+         */
+        foreach ($constants as $item){
+            if (in_array($method,$item->notes)){
+                $constant = $item;
+                break;
             }
         }
-        return [];
+
+        /** 获取到 $arguments 信息 */
+        return self::returnMake($constant, $arguments);
     }
 
+    /**
+     * 返回选择的内容
+     * @param EnumDto $constant
+     * @param array $arguments
+     * @return mixed
+     */
+    private static function returnMake(EnumDto $constant, array $arguments)
+    {
+        /** arg 为空 */
+        if (empty($arguments)){
+            return $constant;
+        }
+
+        /** arg 内容为单个时, 则默认为 name、value、notes */
+        if (count($arguments) === 1){
+            list($arg1) = $arguments;
+            if (array_key_exists($arg1, (array)$constant)){
+                return $constant->{$arg1};
+            }
+        }
+
+        /** arg 内容为两个时, 则默认为 notes => keys */
+        if (count($arguments) === 2){
+            list($arg1, $arg2) = $arguments;
+            if (array_key_exists($arg1, (array)$constant)){
+                return $constant->{$arg1}[$arg2] ?? null;
+            }
+        }
+        return null;
+    }
 
     /**
      * zh: 返回当前常量数组
      * en: returns the current constant array
      * @return array
-     * @throws ReflectionException
      */
     private static function toArray(): array
     {
         $class = static::class;
-        if (!isset(static::$constants[$class])) {
-            $regular = '#[*\s]*(^/|/$)[*\s]*#';
-            $reflection = new ReflectionClass($class);
+        if (!isset(static::$instances[$class])) {
+            try {
+                $reflection = new ReflectionClass($class);
+            } catch (ReflectionException $e) {
+                return [];
+            }
+
+            /** 获取到所有函数 */
             foreach ($reflection->getReflectionConstants() as $constant){
-                static::$constants[$class][$constant->getName()] = [
-                    'key'       =>  $constant->getName(),
-                    'value'     =>  $constant->getValue(),
-                    'message'   =>  preg_replace($regular, '', $constant->getDocComment())
-                ];
+
+                $notes = array();
+                /** 匹配到注解中的 @界定和(".*") 内容 */
+                $docComment = $constant->getDocComment();
+                if ($docComment && preg_match_all('/@([a-z]+)\(\"(.+)\"\)/', $docComment, $match)){
+                    /** 收集注解信息 */
+                    $notes['name']  = $constant->getName();
+                    $notes['value'] = $constant->getValue();
+
+                    for ($i = 0; $i < count($match[1]); $i++){
+                        $notes[$match[1][$i]] = $match[2][$i];
+                    }
+                }
+                /** 获取到 key => value */
+                $dto = new EnumDto();
+                $dto->name  = $constant->getName();
+                $dto->value = $constant->getValue();
+
+                /** 解析注解信息 */
+                $dto->notes = $notes;
+
+                /** 指向实例 */
+                static::$instances[$class][$constant->getName()] = $dto;
             }
         }
-        return static::$constants[$class];
+        return static::$instances[$class];
     }
 
     /**
-     * @param $name
-     * @param $arguments
-     * @return mixed|static
-     * @throws ReflectionException
+     * @param string $method
+     * @param array $arguments
+     * @return mixed|EnumDto|null
      */
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic(string $method, array $arguments)
     {
+        /** 获取到类名称 */
         $class = static::class;
-        if (!isset(self::$instances[$class][$name])) {
-            $array = static::toArray();
-            if (!isset($array[$name]) && !array_key_exists($name, $array)) {
-                $message = "No static method or enum constant '$name' in class " . static::class;
-                throw new BadMethodCallException($message);
+
+        /** 查看实例内是否已经存在此类信息 */
+        if (!isset(self::$instances[$class][$method])) {
+
+            /** 获取到实例常数 */
+            $constants = static::toArray();
+
+            /** 获取到常量名称 */
+            if (!isset($constants[$method]) && !array_key_exists($method, $constants)) {
+                return null;
             }
-            return self::$instances[$class][$name] = new static($array[$name]['key']);
         }
-        return clone self::$instances[$class][$name];
+        return self::searchConst($method, $arguments);
     }
 }
