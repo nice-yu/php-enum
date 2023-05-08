@@ -18,12 +18,6 @@ use NiceYu\Enum\Enum;
 class WeekEnum extends Enum
 {
     /**
-     * @zh("星期日")
-     * @en("sunday")
-     */
-    protected const SUNDAY = 0;
-
-    /**
      * @zh("星期一")
      * @en("monday")
      */
@@ -58,4 +52,10 @@ class WeekEnum extends Enum
      * @en("saturday")
      */
     protected const SATURDAY = 6;
+
+    /**
+     * @zh("星期日")
+     * @en("sunday")
+     */
+    protected const SUNDAY = 0;
 }

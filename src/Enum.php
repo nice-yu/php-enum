@@ -112,7 +112,8 @@ abstract class Enum
          * @var EnumDto $item
          */
         foreach ($constants as $item){
-            if (in_array($method,$item->notes)){
+
+            if (in_array($method,$item->notes,true)){
                 $constant = $item;
                 break;
             }
@@ -124,11 +125,11 @@ abstract class Enum
 
     /**
      * 返回选择的内容
-     * @param EnumDto $constant
+     * @param ?EnumDto $constant
      * @param array $arguments
      * @return mixed
      */
-    private static function returnMake(EnumDto $constant, array $arguments)
+    private static function returnMake(?EnumDto $constant, array $arguments)
     {
         /** arg 为空 */
         if (empty($arguments)){
