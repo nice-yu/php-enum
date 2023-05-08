@@ -22,42 +22,46 @@ abstract class Enum
     /**
      * get 方式获取到 const 信息
      * 注意: 使用值 反向获取的时候, 如果存在多个相同值, 不准确
-     * @param string $value
+     * @param $value
      * @param ...$arguments
      * @return mixed
+     * @throws ReflectionException
      */
-    public static function get(string $value, ...$arguments)
+    public static function get($value, ...$arguments)
     {
         return self::searchConst($value, $arguments);
     }
 
     /**
      * 获取到 const 信息, 返回 name
-     * @param string $value
+     * @param $value
      * @return string
+     * @throws ReflectionException
      */
-    public static function getKey(string $value): string
+    public static function getKey($value): string
     {
         return self::searchConst($value, ['name']);
     }
 
     /**
      * 获取到 const 信息, 返回 value
-     * @param string $value
+     * @param $value
      * @return mixed|EnumDto|null
+     * @throws ReflectionException
      */
-    public static function getValue(string $value)
+    public static function getValue($value)
     {
         return self::searchConst($value, ['value']);
     }
 
     /**
      * 获取到 const 信息, 返回 message
-     * @param string $value
+     * @param $value
      * @param string $lang
      * @return mixed|EnumDto|null
+     * @throws ReflectionException
      */
-    public static function getMessage(string $value, string $lang = 'zh')
+    public static function getMessage($value, string $lang = 'zh')
     {
         return self::searchConst($value, ['notes',$lang]);
     }
@@ -65,6 +69,7 @@ abstract class Enum
     /**
      * 获取到所有 const 的 key
      * @return array
+     * @throws ReflectionException
      */
     public static function getKeys(): array
     {
@@ -74,6 +79,7 @@ abstract class Enum
     /**
      * 获取到所有 const 的 value
      * @return array
+     * @throws ReflectionException
      */
     public static function getValues(): array
     {
@@ -86,6 +92,7 @@ abstract class Enum
      * 获取到所有 const 的 note
      * @param string $lang
      * @return array
+     * @throws ReflectionException
      */
     public static function getMessages(string $lang = 'zh'): array
     {
@@ -98,11 +105,12 @@ abstract class Enum
 
     /**
      * 使用 name 获取到 const 信息
-     * @param string $method
+     * @param $method
      * @param array $arguments
      * @return mixed|EnumDto|null
+     * @throws ReflectionException
      */
-    private static function searchConst(string $method, array $arguments)
+    private static function searchConst($method, array $arguments)
     {
         $constants = self::toArray();
         $constant = null;
@@ -158,16 +166,14 @@ abstract class Enum
      * zh: 返回当前常量数组
      * en: returns the current constant array
      * @return array
+     * @throws ReflectionException
      */
     private static function toArray(): array
     {
         $class = static::class;
         if (!isset(static::$instances[$class])) {
-            try {
-                $reflection = new ReflectionClass($class);
-            } catch (ReflectionException $e) {
-                return [];
-            }
+
+            $reflection = new ReflectionClass($class);
 
             /** 获取到所有函数 */
             foreach ($reflection->getReflectionConstants() as $constant){
@@ -203,6 +209,7 @@ abstract class Enum
      * @param string $method
      * @param array $arguments
      * @return mixed|EnumDto|null
+     * @throws ReflectionException
      */
     public static function __callStatic(string $method, array $arguments)
     {

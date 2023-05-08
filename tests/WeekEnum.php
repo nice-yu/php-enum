@@ -14,6 +14,7 @@ use NiceYu\Enum\Enum;
  * @method static THURSDAY(...$arg)
  * @method static FRIDAY(...$arg)
  * @method static SATURDAY(...$arg)
+ * @method static TEST(...$arg)
  */
 class WeekEnum extends Enum
 {
